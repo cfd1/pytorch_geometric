@@ -19,7 +19,7 @@ class ZINC(InMemoryDataset):
     Args:
         root (string): Root directory where the dataset should be saved.
         subset (boolean, optional): If set to :obj:`True`, will only load a
-            subset of the dataset (13,000 molecular graphs), following the
+            subset of the dataset (12,000 molecular graphs), following the
             `"Benchmarking Graph Neural Networks"
             <https://arxiv.org/abs/2003.00982>`_ paper. (default: :obj:`False`)
         split (string, optional): If :obj:`"train"`, loads the training
@@ -101,7 +101,7 @@ class ZINC(InMemoryDataset):
                 y = mol['logP_SA_cycle_normalized'].to(torch.float)
 
                 adj = mol['bond_type']
-                edge_index = adj.nonzero().t().contiguous()
+                edge_index = adj.nonzero(as_tuple=False).t().contiguous()
                 edge_attr = adj[edge_index[0], edge_index[1]].to(torch.long)
 
                 data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr,

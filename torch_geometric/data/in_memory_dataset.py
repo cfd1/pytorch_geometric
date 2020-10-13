@@ -85,7 +85,8 @@ class InMemoryDataset(Dataset):
             data[key] = item[s]
         return data
 
-    def collate(self, data_list):
+    @staticmethod
+    def collate(data_list):
         r"""Collates a python list of data objects to the internal storage
         format of :class:`torch_geometric.data.InMemoryDataset`."""
         keys = data_list[0].keys
@@ -111,9 +112,11 @@ class InMemoryDataset(Dataset):
 
         for key in keys:
             item = data_list[0][key]
-            if torch.is_tensor(item):
+            if torch.is_tensor(item) and len(data_list) > 1:
                 data[key] = torch.cat(data[key],
                                       dim=data.__cat_dim__(key, item))
+            elif torch.is_tensor(item):  # Don't duplicate attributes...
+                data[key] = data[key][0]
             elif isinstance(item, int) or isinstance(item, float):
                 data[key] = torch.tensor(data[key])
 
